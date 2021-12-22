@@ -1,32 +1,46 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
+let areSetsEqual = (a, b) => a.size === b.size && [...a].every(value => b.has(value));
 
 async function run() {
     const GITHUB_TOKEN = core.getInput('GITHUB_TOKEN');
-    // temporary and hardcorded
-    const octokit = github.getOctokit('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');
+    const octokit = github.getOctokit(GITHUB_TOKEN); 
     
     const { context = {} } = github;
     const { pull_request } = context.payload;
-    console.log(github, pull_request)
 
-    console.log(context)
-    // const listOfPRs = await octokit.rest.pulls.list({
-    //     owner: 'fundamental-michele',
-    //     repo: "FundamentalMedia/action-pull-request",
-    //   });
+    const listOfPRs = await octokit.rest.pulls.list({
+        owner: 'FundamentalMedia',
+        repo: "action-pull-request",
+        state: 'all'
+      });
 
-    // console.log("listOfPRs",listOfPRs)
+    const matchingPR = listOfPRs.data.find(pr=> pr.title === pull_request.title && pr.merged_at && pr.status === 'closed')
 
+    if(matchingPR && matchingPR.length){
+        // TODO promise all it and replace hardcoded owner/repo
+        const listCommitPullRequest = await octokit.rest.pulls.listCommits({
+            owner: 'FundamentalMedia',
+            repo: "action-pull-request",
+            pull_number: pull_request.number,
+          });
+        const listCommitMatchingPR = await octokit.rest.pulls.listCommits({
+            owner: 'FundamentalMedia',
+            repo: "action-pull-request",
+            pull_number: matchingPR.number,
+          });
 
-    // if(pull_request.name in listOfPRs){
-        // MERGE the PR if check pass
-        // octokit.rest.pulls.merge({
-        //     owner,
-        //     repo,
-        //     pull_number :pull_request.number,
-        //   });
-    // }
+        const SetCommitPullRequest = new Set(listCommitPullRequest.data.map(comm => comm.sha))
+        const SetCommitMatchingPR = new Set(listCommitMatchingPR.data.map(comm => comm.sha))
+
+        if(areSetsEqual(SetCommitPullRequest, SetCommitMatchingPR)){
+            await octokit.rest.pulls.merge({
+                owner: "FundamentalMedia",
+                repo: "action-pull-request",
+                pull_number: pull_request.number,
+              });
+        }
+    }
 
 
 
