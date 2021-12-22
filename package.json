@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/FundamentalMedia/action-pull-request/issues"
   },
-  "homepage": "https://github.com/FundamentalMedia/action-pull-request#readme"
+  "homepage": "https://github.com/FundamentalMedia/action-pull-request#readme",
+  "devDependencies": {
+    "@vercel/ncc": "^0.33.1"
+  }
 }
