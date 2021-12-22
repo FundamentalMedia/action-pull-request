@@ -11,22 +11,22 @@ async function run() {
 
     const listOfPRs = await octokit.rest.pulls.list({
         owner: 'FundamentalMedia',
-        repo: "action-pull-request",
+        repo: context.payload.repository.name,
         state: 'all'
       });
 
     const matchingPR = listOfPRs.data.find(pr=> pr.title === pull_request.title && pr.merged_at && pr.status === 'closed')
 
     if(matchingPR && matchingPR.length){
-        // TODO promise all it and replace hardcoded owner/repo
+        // TODO promise all it and replace hardcoded owner
         const listCommitPullRequest = await octokit.rest.pulls.listCommits({
             owner: 'FundamentalMedia',
-            repo: "action-pull-request",
+            repo: context.payload.repository.name,
             pull_number: pull_request.number,
           });
         const listCommitMatchingPR = await octokit.rest.pulls.listCommits({
             owner: 'FundamentalMedia',
-            repo: "action-pull-request",
+            repo: context.payload.repository.name,
             pull_number: matchingPR.number,
           });
 
@@ -36,13 +36,14 @@ async function run() {
         if(areSetsEqual(SetCommitPullRequest, SetCommitMatchingPR)){
             await octokit.rest.pulls.merge({
                 owner: "FundamentalMedia",
-                repo: "action-pull-request",
+                repo: context.payload.repository.name,
                 pull_number: pull_request.number,
+                commit_title: "merged by bot",
+                commit_message: "merged by bot",
+                merge_method: "squash"
               });
         }
     }
-
-
 
 }
 
