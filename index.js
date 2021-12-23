@@ -9,6 +9,8 @@ async function run() {
     const { context = {} } = github;
     const { pull_request } = context.payload;
 
+    core.info(context);
+
     const listOfPRs = await octokit.rest.pulls.list({
         owner: 'FundamentalMedia',
         repo: context.payload.repository.name,
@@ -16,8 +18,6 @@ async function run() {
       });
 
     const matchingPR = listOfPRs.data.find(pr=> pr.title === pull_request.title && pr.merged_at && pr.status === 'closed')
-    
-    core.info(context);
 
     if(matchingPR && matchingPR.length){
 

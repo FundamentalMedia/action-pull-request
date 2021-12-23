@@ -8453,6 +8453,8 @@ async function run() {
     const { context = {} } = github;
     const { pull_request } = context.payload;
 
+    core.info(context);
+
     const listOfPRs = await octokit.rest.pulls.list({
         owner: 'FundamentalMedia',
         repo: context.payload.repository.name,
@@ -8462,6 +8464,13 @@ async function run() {
     const matchingPR = listOfPRs.data.find(pr=> pr.title === pull_request.title && pr.merged_at && pr.status === 'closed')
 
     if(matchingPR && matchingPR.length){
+
+        await octokit.rest.pulls.createReview({
+          owner: "FundamentalMedia",
+          repo: context.payload.repository.name,
+          pull_number: pull_request.number,
+          event: 'APPROVE'
+        })
         // TODO promise all it and replace hardcoded owner
         const listCommitPullRequest = await octokit.rest.pulls.listCommits({
             owner: 'FundamentalMedia',
@@ -8477,7 +8486,10 @@ async function run() {
         const SetCommitPullRequest = new Set(listCommitPullRequest.data.map(comm => comm.sha))
         const SetCommitMatchingPR = new Set(listCommitMatchingPR.data.map(comm => comm.sha))
 
+        console.log("context", context)
+
         if(areSetsEqual(SetCommitPullRequest, SetCommitMatchingPR)){
+
             await octokit.rest.pulls.merge({
                 owner: "FundamentalMedia",
                 repo: context.payload.repository.name,
@@ -8491,7 +8503,7 @@ async function run() {
 
 }
 
-run();
+run().catch(err => core.setFailed(err.message));
 })();
 
 module.exports = __webpack_exports__;
