@@ -8454,7 +8454,8 @@ async function run() {
     const { pull_request } = context.payload;
 
     core.info(context);
-
+    console.log("context", context)
+    
     const listOfPRs = await octokit.rest.pulls.list({
         owner: 'FundamentalMedia',
         repo: context.payload.repository.name,
@@ -8486,7 +8487,7 @@ async function run() {
         const SetCommitPullRequest = new Set(listCommitPullRequest.data.map(comm => comm.sha))
         const SetCommitMatchingPR = new Set(listCommitMatchingPR.data.map(comm => comm.sha))
 
-        console.log("context", context)
+
 
         if(areSetsEqual(SetCommitPullRequest, SetCommitMatchingPR)){
 
