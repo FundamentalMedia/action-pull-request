@@ -16,6 +16,8 @@ async function run() {
       });
 
     const matchingPR = listOfPRs.data.find(pr=> pr.title === pull_request.title && pr.merged_at && pr.status === 'closed')
+    
+    core.info(context);
 
     if(matchingPR && matchingPR.length){
 
