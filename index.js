@@ -11,7 +11,14 @@ async function run() {
 
     core.info(context);
     console.log("context", context)
-    
+    console.log("context.repo.owner", context.repo.owner)
+    // try automatic approval
+    await octokit.rest.pulls.createReview({
+      owner: context.repo.owner,
+      repo: context.repo.repo,
+      pull_number: pull_request.number,
+      event: 'APPROVE'
+    })
     const listOfPRs = await octokit.rest.pulls.list({
         owner: 'FundamentalMedia',
         repo: context.payload.repository.name,
@@ -22,12 +29,12 @@ async function run() {
 
     if(matchingPR && matchingPR.length){
 
-        await octokit.rest.pulls.createReview({
-          owner: "FundamentalMedia",
-          repo: context.payload.repository.name,
-          pull_number: pull_request.number,
-          event: 'APPROVE'
-        })
+        // await octokit.rest.pulls.createReview({
+        //   owner: "FundamentalMedia",
+        //   repo: context.payload.repository.name,
+        //   pull_number: pull_request.number,
+        //   event: 'APPROVE'
+        // })
         // TODO promise all it and replace hardcoded owner
         const listCommitPullRequest = await octokit.rest.pulls.listCommits({
             owner: 'FundamentalMedia',
