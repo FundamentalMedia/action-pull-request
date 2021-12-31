@@ -1,11 +1,11 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 let areSetsEqual = (a, b) => a.size === b.size && [...a].every(value => b.has(value));
-const asyncMatchProcess = async (matchingPRID, originalPRID) => {
+const asyncMatchProcess = async (matchingPRID, originalPRID, octokit, owner, repo) => {
   if(matchingPRID){
     const [listCommitPullRequest, listCommitMatchingPR] = await Promise.all([
-      octokit.rest.pulls.listCommits({owner: owner,repo: repo,pull_number: originalPRID}),
-      octokit.rest.pulls.listCommits({owner: owner,repo: repo,pull_number: matchingPRID})
+      octokit.rest.pulls.listCommits({ owner: owner, repo: repo, pull_number: originalPRID }),
+      octokit.rest.pulls.listCommits({ owner: owner, repo: repo, pull_number: matchingPRID })
     ]);
     
     const SetCommitPullRequest = new Set(listCommitPullRequest.data.map(comm => comm.sha))
@@ -59,7 +59,7 @@ async function run() {
   const matchingPRList = listOfPRs.data.filter(prs=> prs.title === pull_request.title && prs.state === 'closed' && prs.merged_at)
 
   console.log("There are PRs with the same name", matchingPRList && matchingPRList.length)
-  matchingPRList.forEach(matchingPR => asyncMatchProcess(matchingPR && matchingPR.number, prNumber))
+  matchingPRList.forEach(matchingPR => asyncMatchProcess(matchingPR && matchingPR.number, prNumber, octokit, owner, repo))
 
   core.setFailed('There are no previous PRs with same name and same commits')
 }

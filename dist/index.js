@@ -8503,7 +8503,7 @@ async function run() {
   const matchingPRList = listOfPRs.data.filter(prs=> prs.title === pull_request.title && prs.state === 'closed' && prs.merged_at)
 
   console.log("There are PRs with the same name", matchingPRList && matchingPRList.length)
-  matchingPRList.forEach(matchingPR => asyncMatchProcess(matchingPR && matchingPR.number, prNumber))
+  matchingPRList.forEach(matchingPR => asyncMatchProcess(matchingPR && matchingPR.number, prNumber, octokit))
 
   core.setFailed('There are no previous PRs with same name and same commits')
 }
