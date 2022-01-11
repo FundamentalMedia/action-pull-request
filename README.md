@@ -7,7 +7,7 @@ Public action, by being in a public repo this action can be used by different pr
 
 The below is an example of usage, note the @v3.1 pointing to the right version/tag.
 ```bash
-name: Test
+name: Autoapprove
 
 on:
   pull_request:
@@ -18,7 +18,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: FundamentalMedia/action-pull-request@v3.1
+
+      - name: Checking if auto-approve possible
+        uses: ./
         with:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 ```
