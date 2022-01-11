@@ -53,10 +53,8 @@ async function run() {
             //     merge_method: "squash"
             //   });
         }else{
-          core.setFailed('There are no previous PRs with same name and same commits')
+          core.setFailed('There is a PR with the same name as this one but they dont`t have the same commits')
         }
-    }else{
-      core.setFailed('There are no previous PRs with same name and same commits')
     }
 }
 
