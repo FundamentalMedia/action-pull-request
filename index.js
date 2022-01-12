@@ -12,6 +12,29 @@ async function run() {
     const owner = context.repo.owner
     const repo  = context.repo.repo
     const number = pull_request.number
+
+    try{
+      console.log("Requesting PR review")
+      const reviewers = [
+        'fundamental-michele',
+        'fundamentalgeorge',
+        'fundamentaltudor',
+        'fundamental-ricardo',
+        'fundamentalandrew'
+      ].filter(rev=> rev !== (pull_request && pull_request.user.login))
+
+      await octokit.rest.pulls.requestReviewers({
+        owner,
+        repo,
+        pull_number: number,
+        reviewers
+      });
+    }catch(error){
+      console.log("Unable to request reviewers")
+      console.error(error)
+    }
+
+
     console.log("Repo info", context.repo)
     console.log("PR info", pull_request)
     const listOfPRs = await octokit.rest.pulls.list({
