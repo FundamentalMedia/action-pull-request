@@ -5,9 +5,13 @@ Public action, by being in a public repo this action can be used by different pr
 ```action.yml``` specifies this is a gihub action
 
 
-```index.js``` contains the working files; it looks all submitted PRs and checks wether there is one matching by name and commits the one submitted, it then proceed to approve it.
+```index.js``` contains the working files; 
+
+
+This action looks at all of the submitted PRs and checks whether there is one matching the one just created by name and contained commits, if true it then proceed to approve it.
 
 The below is an example of usage, note the @v3.3 pointing to the right version/tag.
+
 ```bash
 name: Autoapprove
 
@@ -26,5 +30,3 @@ jobs:
         with:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 ```
-
-By default the test fails with no matching PRs are found, this doesn't prevent merging.
