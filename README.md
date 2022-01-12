@@ -3,9 +3,11 @@ Public action, by being in a public repo this action can be used by different pr
 
 
 ```action.yml``` specifies this is a gihub action
+
+
 ```index.js``` contains the working files; it looks all submitted PRs and checks wether there is one matching by name and commits the one submitted, it then proceed to approve it.
 
-The below is an example of usage, note the @v3.1 pointing to the right version/tag.
+The below is an example of usage, note the @v3.3 pointing to the right version/tag.
 ```bash
 name: Autoapprove
 
@@ -20,7 +22,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Checking if auto-approve possible
-        uses: ./
+        uses: FundamentalMedia/action-pull-request@v3.3
         with:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 ```
